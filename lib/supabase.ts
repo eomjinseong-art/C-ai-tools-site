@@ -18,11 +18,15 @@ export const supabase = createClient(
   supabaseAnonKey || "placeholder-anon-key",
   {
     auth: { persistSession: false },
-    // Next.js persists its fetch Data Cache across builds/deployments; without
-    // this, a request made once during an early build (e.g. before some rows
-    // existed) can keep being served from that stale cache indefinitely.
+    // Time-based revalidation instead of no-store: every public read (categories,
+    // videos, ads, carousel) can now be served from Next's Data Cache for up to
+    // 60s, cutting a Supabase round-trip out of most page loads. This still
+    // avoids the old "cached forever across deployments" risk (revalidate
+    // guarantees a max 60s staleness), and admin writes (ads/videos) already
+    // call revalidatePath("/") on save for immediate invalidation -- see
+    // app/admin/ads/actions.ts and app/admin/videos/actions.ts.
     global: {
-      fetch: (input, init) => fetch(input, { ...init, cache: "no-store" }),
+      fetch: (input, init) => fetch(input, { ...init, next: { revalidate: 60 } }),
     },
   }
 );

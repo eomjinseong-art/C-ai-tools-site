@@ -6,10 +6,6 @@ import CategoryMenu from "@/components/CategoryMenu";
 import VideoCard from "@/components/VideoCard";
 import SummaryPanel from "@/components/SummaryPanel";
 
-// Always fetch fresh: click counts, admin ad/keyword edits, and newly
-// collected videos should never be served from a stale cached fetch response.
-export const dynamic = "force-dynamic";
-
 type SearchVideo = Video & { category_slug: string; category_name: string };
 
 // Official site for each AI tool's category, shown as a "바로가기" link next to

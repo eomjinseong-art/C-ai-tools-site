@@ -11,7 +11,7 @@ const PLACEMENT_LABELS: Record<AdPlacement, string> = {
   category_sidebar_4: "요약 패널 광고 4",
   video_inline: "영상 재생창 하단 (요약 패널)",
   video_list_bottom: "영상 리스트 하단 (10개 목록 아래)",
-  guidebook_footer: "가이드북 하단",
+  guidebook_footer: "홈 캐러셀 상단",
 };
 
 export default function AdEditForm({ placement, ad }: { placement: AdPlacement; ad: Ad | null }) {

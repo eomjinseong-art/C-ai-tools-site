@@ -99,7 +99,7 @@ async function getCarouselVideos(): Promise<CarouselVideo[]> {
     .select("id, title, thumbnail_url, view_count, published_at, categories(slug, name)")
     .eq("status", "published")
     .order("published_at", { ascending: false })
-    .limit(40);
+    .limit(60);
 
   if (error || !data) {
     console.error("Failed to load carousel videos", error);
@@ -121,7 +121,7 @@ async function getCarouselVideos(): Promise<CarouselVideo[]> {
     })
     .filter((v): v is CarouselVideo => v !== null)
     .sort((a, b) => b.view_count - a.view_count)
-    .slice(0, 12);
+    .slice(0, 20);
 }
 
 // Searches the "실전 방법" fields (summary_points/tool_features) plus
@@ -223,6 +223,10 @@ export default async function HomePage({
               핵심만 빠르게 알려드립니다.
             </p>
           </section>
+
+          {/* guidebook_footer: repurposed as the above-carousel slot since the
+              guidebook feature (and its footer ad) was removed. */}
+          <AdBanner placement="guidebook_footer" />
 
           <TopCarousel videos={carouselVideos} />
 

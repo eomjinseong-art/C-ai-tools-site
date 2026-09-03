@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "개인정보처리방침 - 나두AI",
+  title: "개인정보처리방침",
+  alternates: { canonical: "/privacy" },
 };
 
 export default function PrivacyPage() {
@@ -53,9 +54,6 @@ export default function PrivacyPage() {
       <h2>6. 문의처</h2>
       <p>개인정보 관련 문의는 사이트 하단의 문의하기 폼을 통해 접수해 주시기 바랍니다.</p>
 
-      <p className="text-xs text-gray-400 mt-8">
-        본 페이지는 기본 템플릿이며, 서비스 운영 형태에 맞춰 세부 내용을 검토·보완할 예정입니다.
-      </p>
     </article>
   );
 }

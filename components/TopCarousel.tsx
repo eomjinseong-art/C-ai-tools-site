@@ -2,18 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useRef } from "react";
+import type { CarouselVideo } from "@/lib/types";
 import { formatViewCount } from "@/lib/format";
-
-export type CarouselVideo = {
-  id: string;
-  title: string;
-  thumbnail_url: string | null;
-  view_count: number;
-  category_slug: string;
-  category_name: string;
-};
+import { compactThumbnail } from "@/lib/thumbnails";
 
 const AUTO_SLIDE_MS = 4000;
+
+export type { CarouselVideo };
 
 export default function TopCarousel({ videos }: { videos: CarouselVideo[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -52,42 +47,47 @@ export default function TopCarousel({ videos }: { videos: CarouselVideo[] }) {
         ref={trackRef}
         className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
       >
-        {videos.map((video) => (
-          <Link
-            key={video.id}
-            data-tile
-            href={`/?category=${video.category_slug}&video=${video.id}`}
-            scroll={false}
-            className="group relative w-64 shrink-0 snap-start overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
-          >
-            <div className="relative aspect-video w-full overflow-hidden bg-gray-100 dark:bg-gray-800">
-              {video.thumbnail_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={video.thumbnail_url}
-                  alt={video.title}
-                  className="h-full w-full object-cover transition group-hover:scale-105"
-                  loading="lazy"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-gray-400 text-sm dark:text-gray-500">
-                  썸네일 없음
-                </div>
-              )}
-              <span className="absolute top-2 left-2 rounded-full bg-brand-600 px-2 py-0.5 text-xs font-semibold text-white">
-                {video.category_name}
-              </span>
-            </div>
-            <div className="p-3">
-              <p className="line-clamp-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                {video.title}
-              </p>
-              <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
-                {formatViewCount(video.view_count)}
-              </p>
-            </div>
-          </Link>
-        ))}
+        {videos.map((video, index) => {
+          const src = compactThumbnail(video.thumbnail_url);
+          return (
+            <Link
+              key={video.id}
+              data-tile
+              href={`/video/${video.id}`}
+              prefetch={false}
+              className="group relative w-64 shrink-0 snap-start overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
+            >
+              <div className="relative aspect-video w-full overflow-hidden bg-gray-100 dark:bg-gray-800">
+                {src ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={src}
+                    alt={video.title}
+                    className="h-full w-full object-cover transition group-hover:scale-105"
+                    loading={index < 4 ? "eager" : "lazy"}
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-gray-400 text-sm dark:text-gray-500">
+                    썸네일 없음
+                  </div>
+                )}
+                <span className="absolute top-2 left-2 rounded-full bg-brand-600 px-2 py-0.5 text-xs font-semibold text-white">
+                  {video.category_name}
+                </span>
+              </div>
+              <div className="p-3">
+                <p className="line-clamp-2 text-sm font-medium text-gray-900 dark:text-gray-100">
+                  {video.title}
+                </p>
+                {formatViewCount(video.view_count) && (
+                  <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+                    {formatViewCount(video.view_count)}
+                  </p>
+                )}
+              </div>
+            </Link>
+          );
+        })}
       </div>
 
       {videos.length > 1 && (

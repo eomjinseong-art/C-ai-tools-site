@@ -1,23 +1,51 @@
-import { redirect, notFound } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import BrowseView from "@/components/BrowseView";
+import { getCategories, getPublishedVideo, getVideosForCategory } from "@/lib/data";
+import { compactThumbnail } from "@/lib/thumbnails";
 
-// The video detail UI now lives in the summary panel of the 3-panel app at
-// "/". This route stays around only so old links (guidebook source links,
-// shared URLs) keep working.
-export default async function VideoRedirectPage({ params }: { params: { id: string } }) {
-  const { data: video } = await supabase
-    .from("videos")
-    .select("category_id")
-    .eq("id", params.id)
-    .maybeSingle();
+export const revalidate = 60;
+export const dynamicParams = true;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
+  const video = await getPublishedVideo(params.id);
+  if (!video) return { title: "영상" };
+  const description = video.summary ?? video.hook ?? video.title;
+  const image = compactThumbnail(video.thumbnail_url);
+  return {
+    title: video.title,
+    description,
+    alternates: { canonical: `/video/${video.id}` },
+    openGraph: {
+      title: video.title,
+      description,
+      type: "video.other",
+      images: image ? [{ url: image }] : undefined,
+    },
+  };
+}
+
+export default async function VideoPage({ params }: { params: { id: string } }) {
+  const [video, categories] = await Promise.all([
+    getPublishedVideo(params.id),
+    getCategories(),
+  ]);
   if (!video) notFound();
 
-  const { data: category } = await supabase
-    .from("categories")
-    .select("slug")
-    .eq("id", video.category_id)
-    .maybeSingle();
-  if (!category) notFound();
+  const selectedCategory = categories.find((c) => c.id === video.category_id) ?? null;
+  const videos = selectedCategory ? await getVideosForCategory(selectedCategory.id) : [];
+  const selectedVideo = videos.find((v) => v.id === video.id) ?? video;
 
-  redirect(`/?category=${category.slug}&video=${params.id}`);
+  return (
+    <BrowseView
+      categories={categories}
+      selectedCategory={selectedCategory}
+      videos={videos}
+      selectedVideo={selectedVideo}
+    />
+  );
 }

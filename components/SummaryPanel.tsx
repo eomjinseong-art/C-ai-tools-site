@@ -1,6 +1,7 @@
 import type { Video } from "@/lib/types";
 import AdBanner from "@/components/AdBanner";
-import { formatViewCount, formatPublishedDate, formatDuration } from "@/lib/format";
+import YouTubeEmbed from "@/components/YouTubeEmbed";
+import { formatViewCount, formatPublishedDate, formatDuration, joinMeta } from "@/lib/format";
 
 export default function SummaryPanel({ video }: { video: Video | null }) {
   if (!video) {
@@ -19,15 +20,11 @@ export default function SummaryPanel({ video }: { video: Video | null }) {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="aspect-video w-full overflow-hidden rounded-xl bg-black">
-        <iframe
-          className="h-full w-full"
-          src={`https://www.youtube.com/embed/${video.youtube_id}`}
-          title={video.title}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        />
-      </div>
+      <YouTubeEmbed
+        youtubeId={video.youtube_id}
+        title={video.title}
+        thumbnailUrl={video.thumbnail_url}
+      />
 
       <AdBanner placement="video_inline" />
 
@@ -53,16 +50,19 @@ export default function SummaryPanel({ video }: { video: Video | null }) {
           ) : (
             video.channel_title && <span>{video.channel_title}</span>
           )}
-          <span>·</span>
-          <span>{formatViewCount(video.view_count)}</span>
-          <span>·</span>
-          <span>{formatPublishedDate(video.published_at)}</span>
-          {video.duration_seconds && (
-            <>
-              <span>·</span>
-              <span>{formatDuration(video.duration_seconds)}</span>
-            </>
-          )}
+          {joinMeta(
+            formatViewCount(video.view_count),
+            formatPublishedDate(video.published_at),
+            formatDuration(video.duration_seconds),
+          )
+            .split(" · ")
+            .filter(Boolean)
+            .map((part) => (
+              <span key={part}>
+                <span className="mx-0.5">·</span>
+                {part}
+              </span>
+            ))}
           <span>·</span>
           <a
             href={`https://www.youtube.com/watch?v=${video.youtube_id}`}

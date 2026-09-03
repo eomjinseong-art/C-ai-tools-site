@@ -77,6 +77,37 @@ export const AD_PLACEMENTS: AdPlacement[] = [
   "guidebook_footer",
 ];
 
+export type CarouselVideo = {
+  id: string;
+  title: string;
+  thumbnail_url: string | null;
+  view_count: number;
+  category_slug: string;
+  category_name: string;
+};
+
+export type SearchVideo = {
+  id: string;
+  title: string;
+  thumbnail_url: string | null;
+  view_count: number;
+  published_at: string | null;
+  channel_title: string | null;
+  rank: number | null;
+  category_slug: string;
+  category_name: string;
+};
+
+export type VideoCardData = {
+  id: string;
+  title: string;
+  thumbnail_url: string | null;
+  channel_title: string | null;
+  view_count: number;
+  published_at: string | null;
+  rank: number | null;
+};
+
 export interface Ad {
   id: string;
   name: string;

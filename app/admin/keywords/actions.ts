@@ -14,7 +14,7 @@ export async function saveKeywords(formData: FormData) {
     .map((k) => k.trim())
     .filter(Boolean);
 
-  if (!categoryId || keywords.length === 0) throw new Error("Missing category_id or keywords");
+  if (!categoryId) throw new Error("Missing category_id");
 
   await supabaseAdmin.from("categories").update({ search_keywords: keywords }).eq("id", categoryId);
 

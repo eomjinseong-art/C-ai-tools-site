@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "이용약관 - 나두AI",
+  title: "이용약관",
+  alternates: { canonical: "/terms" },
 };
 
 export default function TermsPage() {
@@ -58,9 +59,6 @@ export default function TermsPage() {
       <h2>제8조 (문의)</h2>
       <p>약관 관련 문의는 사이트 하단의 문의하기 폼을 통해 접수해 주시기 바랍니다.</p>
 
-      <p className="text-xs text-gray-400 mt-8">
-        본 페이지는 기본 템플릿이며, 서비스 운영 형태에 맞춰 세부 내용을 검토·보완할 예정입니다.
-      </p>
     </article>
   );
 }

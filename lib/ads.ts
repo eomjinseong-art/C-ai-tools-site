@@ -1,19 +1,32 @@
+import { cache } from "react";
 import { supabase } from "@/lib/supabase";
 import type { Ad, AdPlacement } from "@/lib/types";
 
-export async function getActiveAd(placement: AdPlacement): Promise<Ad | null> {
-  const nowIso = new Date().toISOString();
+function isAdLive(ad: Ad, nowMs: number): boolean {
+  if (ad.starts_at && new Date(ad.starts_at).getTime() > nowMs) return false;
+  if (ad.ends_at && new Date(ad.ends_at).getTime() < nowMs) return false;
+  return true;
+}
 
+export const getActiveAds = cache(async (): Promise<Map<AdPlacement, Ad>> => {
   const { data, error } = await supabase
     .from("ads")
     .select("*")
-    .eq("placement", placement)
     .eq("is_active", true)
-    .or(`starts_at.is.null,starts_at.lte.${nowIso}`)
-    .or(`ends_at.is.null,ends_at.gte.${nowIso}`)
-    .order("sort_order", { ascending: true })
-    .limit(1);
+    .order("sort_order", { ascending: true });
 
-  if (error || !data || data.length === 0) return null;
-  return data[0] as Ad;
+  const map = new Map<AdPlacement, Ad>();
+  if (error || !data) return map;
+
+  const nowMs = Date.now();
+  for (const row of data as Ad[]) {
+    if (!isAdLive(row, nowMs)) continue;
+    if (!map.has(row.placement)) map.set(row.placement, row);
+  }
+  return map;
+});
+
+export async function getActiveAd(placement: AdPlacement): Promise<Ad | null> {
+  const ads = await getActiveAds();
+  return ads.get(placement) ?? null;
 }

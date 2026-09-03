@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/adminAuth";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { revalidatePublicPaths } from "@/lib/revalidatePublic";
 
 export async function saveAd(formData: FormData) {
   requireAdmin();
@@ -32,5 +33,5 @@ export async function saveAd(formData: FormData) {
   }
 
   revalidatePath("/admin/ads");
-  revalidatePath("/");
+  revalidatePublicPaths();
 }

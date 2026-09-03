@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { Category } from "@/lib/types";
-import { supabase } from "@/lib/supabase";
+import { recordCategoryClick } from "@/app/actions/stats";
 
 export default function CategoryMenu({
   categories,
@@ -12,8 +12,14 @@ export default function CategoryMenu({
   selectedSlug: string;
 }) {
   function onSelect(slug: string) {
-    // Fire-and-forget: don't block navigation on the click-count write.
-    supabase.rpc("increment_category_clicks", { p_slug: slug }).then(() => {});
+    try {
+      const key = `nadu_cat_${slug}`;
+      if (sessionStorage.getItem(key)) return;
+      sessionStorage.setItem(key, "1");
+    } catch {
+      // sessionStorage may be unavailable.
+    }
+    void recordCategoryClick(slug);
   }
 
   return (
@@ -23,7 +29,8 @@ export default function CategoryMenu({
         return (
           <Link
             key={category.id}
-            href={`/?category=${category.slug}`}
+            href={`/category/${category.slug}`}
+            prefetch={false}
             scroll={false}
             onClick={() => onSelect(category.slug)}
             className={`shrink-0 rounded-lg px-3 py-2 text-sm font-medium transition whitespace-nowrap lg:whitespace-normal ${

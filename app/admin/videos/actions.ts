@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/adminAuth";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { revalidatePublicPaths } from "@/lib/revalidatePublic";
 
 export async function deleteVideo(formData: FormData) {
   requireAdmin();
@@ -26,5 +27,5 @@ export async function deleteVideo(formData: FormData) {
   }
 
   revalidatePath("/admin/videos");
-  revalidatePath("/");
+  revalidatePublicPaths();
 }

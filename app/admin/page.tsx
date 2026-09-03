@@ -23,7 +23,7 @@ export default function AdminHomePage() {
         >
           <h2 className="font-semibold text-gray-900 dark:text-gray-100">광고 슬롯 관리</h2>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            8개 슬롯의 이미지·링크·문구·활성화 여부 편집
+            9개 슬롯의 이미지·링크·문구·활성화 여부 편집
           </p>
         </Link>
         <Link

@@ -20,7 +20,8 @@ export default async function AdminKeywordsPage() {
         <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">검색 키워드 관리</h1>
       </div>
       <p className="text-sm text-gray-500 dark:text-gray-400">
-        쉼표(,)로 구분해서 입력하세요. 다음 수집기 실행부터 반영됩니다.
+        쉼표(,)로 구분해서 입력하세요. 비워 저장하면 키워드가 삭제됩니다. 다음 수집기
+        실행부터 반영됩니다.
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

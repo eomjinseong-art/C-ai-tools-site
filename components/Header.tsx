@@ -18,7 +18,7 @@ export default function Header() {
           </span>
         </div>
         <div className="flex items-center gap-4 sm:gap-6">
-          <form action="/" method="GET" className="hidden sm:block">
+          <form action="/search" method="GET" className="hidden sm:block">
             <input
               type="search"
               name="q"

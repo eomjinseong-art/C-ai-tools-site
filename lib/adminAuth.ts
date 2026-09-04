@@ -13,9 +13,34 @@ function sha256(value: string): Buffer {
   return createHash("sha256").update(value).digest();
 }
 
+export function getAdminPassword(): string | undefined {
+  const value = process.env.ADMIN_PASSWORD?.trim();
+  return value || undefined;
+}
+
+/** Prefer ADMIN_SESSION_TOKEN; if missing, derive one so password-only Vercel setup still works. */
+export function getAdminSessionToken(): string | undefined {
+  const explicit = process.env.ADMIN_SESSION_TOKEN?.trim();
+  if (explicit) return explicit;
+  const password = getAdminPassword();
+  if (!password) return undefined;
+  return createHash("sha256").update(`nadu-admin-session:${password}`).digest("hex");
+}
+
+export function isAdminAuthConfigured(): boolean {
+  return Boolean(getAdminPassword());
+}
+
+function cookieSecure(): boolean {
+  return process.env.NODE_ENV === "production";
+}
+
 export function passwordsMatch(input: unknown, expected: string | undefined): boolean {
   if (typeof input !== "string" || !expected) return false;
-  return timingSafeEqual(sha256(input), sha256(expected));
+  const typed = input.trim();
+  const want = expected.trim();
+  if (!typed || !want) return false;
+  return timingSafeEqual(sha256(typed), sha256(want));
 }
 
 export function getAdminLoginBlock(): string | null {
@@ -30,7 +55,7 @@ export function recordAdminLoginFailure(): void {
   const fails = Number(cookies().get(ADMIN_FAIL_COOKIE)?.value || 0) + 1;
   const cookieBase = {
     httpOnly: true,
-    secure: true,
+    secure: cookieSecure(),
     sameSite: "lax" as const,
     maxAge: LOCK_SECONDS,
     path: "/admin",
@@ -47,7 +72,7 @@ export function clearAdminLoginFailures(): void {
 }
 
 export function isAdminSession(): boolean {
-  const token = process.env.ADMIN_SESSION_TOKEN;
+  const token = getAdminSessionToken();
   if (!token) return false;
   return cookies().get(ADMIN_SESSION_COOKIE)?.value === token;
 }

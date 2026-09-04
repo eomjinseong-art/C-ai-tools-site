@@ -7,19 +7,20 @@ export default function VideoCard({
   video,
   selected,
   showRank = true,
+  href,
 }: {
   video: VideoCardData;
   selected?: boolean;
   showRank?: boolean;
+  href?: string;
 }) {
   const src = compactThumbnail(video.thumbnail_url);
   const meta = joinMeta(formatViewCount(video.view_count), formatPublishedDate(video.published_at));
 
   return (
     <Link
-      href={`/video/${video.id}`}
+      href={href ?? `/video/${video.id}`}
       prefetch={false}
-      scroll={false}
       className={`group flex gap-3 overflow-hidden rounded-xl border p-2 transition ${
         selected
           ? "border-brand-500 bg-brand-50 dark:border-brand-500 dark:bg-brand-500/10"

@@ -38,23 +38,58 @@ export const getVideosForCategory = cache(async (categoryId: string): Promise<Vi
   return (data ?? []) as Video[];
 });
 
+function categoryFromJoin(raw: unknown): { slug: string; name: string } | null {
+  const category = Array.isArray(raw) ? raw[0] : raw;
+  if (!category || typeof category !== "object") return null;
+  const { slug, name } = category as { slug?: unknown; name?: unknown };
+  if (typeof slug !== "string" || typeof name !== "string") return null;
+  return { slug, name };
+}
+
 export const getPublishedVideo = cache(async (id: string): Promise<(Video & { category_slug: string; category_name: string }) | null> => {
-  const { data, error } = await supabase
+  const trimmed = id.trim();
+  if (!trimmed) return null;
+
+  const selectWithCategory = "*, categories(slug, name)";
+  let { data, error } = await supabase
     .from("videos")
-    .select("*, categories(slug, name)")
-    .eq("id", id)
+    .select(selectWithCategory)
+    .eq("id", trimmed)
     .eq("status", "published")
     .maybeSingle();
 
-  if (error || !data) return null;
-  const category = Array.isArray(data.categories) ? data.categories[0] : data.categories;
-  if (!category) return null;
+  if ((error || !data) && trimmed.length <= 16) {
+    const byYoutube = await supabase
+      .from("videos")
+      .select(selectWithCategory)
+      .eq("youtube_id", trimmed)
+      .eq("status", "published")
+      .maybeSingle();
+    data = byYoutube.data;
+    error = byYoutube.error;
+  }
+
+  if (error || !data) {
+    const plain = await supabase
+      .from("videos")
+      .select("*")
+      .eq(trimmed.length <= 16 ? "youtube_id" : "id", trimmed)
+      .eq("status", "published")
+      .maybeSingle();
+    if (plain.error || !plain.data) {
+      if (error) console.error("Failed to load video", error);
+      return null;
+    }
+    data = { ...plain.data, categories: null };
+  }
+
+  const category = categoryFromJoin((data as { categories?: unknown }).categories);
   const { categories, ...video } = data as Video & { categories: unknown };
   void categories;
   return {
     ...(video as Video),
-    category_slug: category.slug as string,
-    category_name: category.name as string,
+    category_slug: category?.slug ?? "",
+    category_name: category?.name ?? "",
   };
 });
 

@@ -53,7 +53,7 @@ export default function TopCarousel({ videos }: { videos: CarouselVideo[] }) {
             <Link
               key={video.id}
               data-tile
-              href={`/video/${video.id}`}
+              href={`/category/${video.category_slug}?video=${video.id}#player`}
               prefetch={false}
               className="group relative w-64 shrink-0 snap-start overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
             >

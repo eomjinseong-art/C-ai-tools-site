@@ -31,7 +31,7 @@ export default function BrowseView({
         <CategoryMenu categories={categories} selectedSlug={selectedCategory?.slug ?? ""} />
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 order-2 lg:order-none">
         {selectedCategory && (
           <div className="flex items-center gap-2 pb-1">
             <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">
@@ -65,6 +65,11 @@ export default function BrowseView({
                 key={video.id}
                 video={video}
                 selected={video.id === selectedVideo?.id}
+                href={
+                  selectedCategory
+                    ? `/category/${selectedCategory.slug}?video=${video.id}#player`
+                    : `/video/${video.id}`
+                }
               />
             ))}
             <AdBanner placement="video_list_bottom" />
@@ -72,7 +77,10 @@ export default function BrowseView({
         )}
       </div>
 
-      <div className="lg:border-l lg:border-gray-100 lg:pl-4 dark:lg:border-gray-800">
+      <div
+        id="player"
+        className="order-1 lg:order-none lg:border-l lg:border-gray-100 lg:pl-4 dark:lg:border-gray-800"
+      >
         <SummaryPanel video={selectedVideo} />
       </div>
     </section>

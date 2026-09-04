@@ -33,7 +33,16 @@ export default async function SearchPage({
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {results.map((video) => (
-            <VideoCard key={video.id} video={video} showRank={false} />
+            <VideoCard
+              key={video.id}
+              video={video}
+              showRank={false}
+              href={
+                video.category_slug
+                  ? `/category/${video.category_slug}?video=${video.id}#player`
+                  : `/video/${video.id}`
+              }
+            />
           ))}
         </div>
       )}

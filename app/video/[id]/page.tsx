@@ -7,12 +7,13 @@ import { compactThumbnail } from "@/lib/thumbnails";
 export const revalidate = 60;
 export const dynamicParams = true;
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { id: string };
-}): Promise<Metadata> {
-  const video = await getPublishedVideo(params.id);
+type VideoPageProps = {
+  params: { id: string } | Promise<{ id: string }>;
+};
+
+export async function generateMetadata({ params }: VideoPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const video = await getPublishedVideo(id);
   if (!video) return { title: "영상" };
   const description = video.summary ?? video.hook ?? video.title;
   const image = compactThumbnail(video.thumbnail_url);
@@ -29,9 +30,10 @@ export async function generateMetadata({
   };
 }
 
-export default async function VideoPage({ params }: { params: { id: string } }) {
+export default async function VideoPage({ params }: VideoPageProps) {
+  const { id } = await params;
   const [video, categories] = await Promise.all([
-    getPublishedVideo(params.id),
+    getPublishedVideo(id),
     getCategories(),
   ]);
   if (!video) notFound();

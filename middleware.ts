@@ -25,16 +25,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (pathname.startsWith("/category/") && video) {
-    const url = request.nextUrl.clone();
-    url.pathname = `/video/${video}`;
-    url.search = "";
-    return NextResponse.redirect(url);
-  }
-
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/", "/category/:path*"],
+  matcher: ["/"],
 };

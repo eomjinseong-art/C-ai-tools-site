@@ -38,10 +38,11 @@ export default function YouTubeEmbed({
     <div className="aspect-video w-full overflow-hidden rounded-xl bg-black">
       <iframe
         className="h-full w-full"
-        src={`https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1`}
+        src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1`}
         title={title}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
+        referrerPolicy="strict-origin-when-cross-origin"
       />
     </div>
   );

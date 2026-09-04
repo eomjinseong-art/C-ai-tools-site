@@ -16,7 +16,7 @@ export default function AdminHomePage() {
         </form>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Link
           href="/admin/ads"
           className="rounded-xl border border-gray-200 bg-white p-6 hover:border-brand-500 dark:border-gray-800 dark:bg-gray-900"
@@ -33,6 +33,15 @@ export default function AdminHomePage() {
           <h2 className="font-semibold text-gray-900 dark:text-gray-100">영상 관리</h2>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             카테고리별 수집된 영상 확인 및 삭제
+          </p>
+        </Link>
+        <Link
+          href="/admin/blog"
+          className="rounded-xl border border-gray-200 bg-white p-6 hover:border-brand-500 dark:border-gray-800 dark:bg-gray-900"
+        >
+          <h2 className="font-semibold text-gray-900 dark:text-gray-100">블로그 초안</h2>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            영상 AI 요약을 Blogger에 붙여넣을 제목·본문으로 복사
           </p>
         </Link>
         <Link

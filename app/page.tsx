@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import AdBanner from "@/components/AdBanner";
 import TopCarousel from "@/components/TopCarousel";
 import CategoryChips from "@/components/CategoryChips";
-import { getCarouselVideos, getCategories } from "@/lib/data";
+import { getCarouselVideos, getCategoryPreviews } from "@/lib/data";
 
 export const revalidate = 60;
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const [categories, carouselVideos] = await Promise.all([
-    getCategories(),
+    getCategoryPreviews(),
     getCarouselVideos(),
   ]);
 
@@ -36,7 +36,7 @@ export default async function HomePage() {
 
       {categories.length > 0 && (
         <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400">
+          <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100">
             카테고리에서 사용법 보기
           </h2>
           <CategoryChips categories={categories} />

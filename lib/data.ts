@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { supabase } from "@/lib/supabase";
-import type { CarouselVideo, Category, SearchVideo, Video } from "@/lib/types";
+import { compactThumbnail } from "@/lib/thumbnails";
+import type { CarouselVideo, Category, CategoryPreview, SearchVideo, Video } from "@/lib/types";
 
 const VIDEO_CARD_COLUMNS =
   "id, title, thumbnail_url, view_count, published_at, channel_title, rank, youtube_id, category_id, status";
@@ -20,6 +21,38 @@ export const getCategories = cache(async (): Promise<Category[]> => {
     return [];
   }
   return pinTrendLast((data ?? []) as Category[]);
+});
+
+export const getCategoryPreviews = cache(async (): Promise<CategoryPreview[]> => {
+  const categories = await getCategories();
+  if (categories.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from("videos")
+    .select("category_id, thumbnail_url, rank")
+    .eq("status", "published")
+    .order("rank", { ascending: true })
+    .limit(300);
+
+  if (error) {
+    console.error("Failed to load category covers", error);
+  }
+
+  const covers = new Map<string, string>();
+  for (const row of data ?? []) {
+    const categoryId = row.category_id as string;
+    if (covers.has(categoryId)) continue;
+    const src = compactThumbnail(row.thumbnail_url as string | null);
+    if (src) covers.set(categoryId, src);
+  }
+
+  return categories.map((category) => ({
+    id: category.id,
+    slug: category.slug,
+    name: category.name,
+    is_trend: category.is_trend,
+    cover_url: compactThumbnail(category.icon_url) ?? covers.get(category.id) ?? null,
+  }));
 });
 
 export const getVideosForCategory = cache(async (categoryId: string): Promise<Video[]> => {

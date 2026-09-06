@@ -11,9 +11,9 @@ export function HomeSkeleton() {
           <div key={i} className="h-40 w-64 shrink-0 rounded-xl bg-gray-200 dark:bg-gray-800" />
         ))}
       </div>
-      <div className="flex flex-wrap gap-2">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {Array.from({ length: 10 }).map((_, i) => (
-          <div key={i} className="h-8 w-20 rounded-full bg-gray-200 dark:bg-gray-800" />
+          <div key={i} className="aspect-video rounded-xl bg-gray-200 dark:bg-gray-800" />
         ))}
       </div>
     </div>

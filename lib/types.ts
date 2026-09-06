@@ -77,6 +77,14 @@ export const AD_PLACEMENTS: AdPlacement[] = [
   "guidebook_footer",
 ];
 
+export type CategoryPreview = {
+  id: string;
+  slug: string;
+  name: string;
+  is_trend: boolean;
+  cover_url: string | null;
+};
+
 export type CarouselVideo = {
   id: string;
   title: string;

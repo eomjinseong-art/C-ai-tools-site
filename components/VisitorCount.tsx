@@ -1,10 +1,26 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { recordVisit } from "@/app/actions/stats";
 
-const STORAGE_KEY = "nadu_visit_count";
-const VISITED_KEY = "nadu_visit_counted";
+const ABACUS_BASE = "https://abacus.jasoncameron.dev";
+const NAMESPACE = "c-ai-tools-site";
+const KEY = "visits";
+const VISITED_DATE_KEY = "abacus_visit_date";
+
+function todayLocal(): string {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function parseCount(payload: unknown): number | null {
+  if (!payload || typeof payload !== "object" || !("value" in payload)) return null;
+  const raw = (payload as { value: unknown }).value;
+  const n = typeof raw === "number" ? raw : Number(raw);
+  return Number.isFinite(n) ? n : null;
+}
 
 export default function VisitorCount() {
   const [count, setCount] = useState<number | null>(null);
@@ -12,58 +28,38 @@ export default function VisitorCount() {
   useEffect(() => {
     let cancelled = false;
 
-    function readCached(): number | null {
-      try {
-        const cached = sessionStorage.getItem(STORAGE_KEY);
-        if (cached) return Number(cached);
-      } catch {
-        // ignore
-      }
-      return null;
-    }
-
-    const cached = readCached();
-    if (cached) {
-      setCount(cached);
-      return;
-    }
-
     const run = async () => {
       try {
-        if (sessionStorage.getItem(VISITED_KEY)) {
-          const again = readCached();
-          if (again && !cancelled) setCount(again);
-          return;
+        const today = todayLocal();
+        let alreadyHit = false;
+        try {
+          alreadyHit = localStorage.getItem(VISITED_DATE_KEY) === today;
+          if (!alreadyHit) localStorage.setItem(VISITED_DATE_KEY, today);
+        } catch {
+          // still attempt a one-time /hit this mount
         }
-        sessionStorage.setItem(VISITED_KEY, "1");
-      } catch {
-        // still try to increment once this mount
-      }
 
-      const next = await recordVisit();
-      if (cancelled || next == null) return;
-      try {
-        sessionStorage.setItem(STORAGE_KEY, String(next));
+        const action = alreadyHit ? "get" : "hit";
+        const res = await fetch(`${ABACUS_BASE}/${action}/${NAMESPACE}/${KEY}`);
+        if (!res.ok) return;
+        const value = parseCount(await res.json());
+        if (cancelled || value == null) return;
+        setCount(value);
       } catch {
-        // ignore
+        // hide on failure
       }
-      setCount(next);
     };
 
-    const id = window.setTimeout(() => {
-      void run();
-    }, 800);
-
+    void run();
     return () => {
       cancelled = true;
-      window.clearTimeout(id);
     };
   }, []);
 
   if (count === null) return null;
 
   return (
-    <span className="text-xs text-gray-400 dark:text-gray-500" title="누적 방문자 수">
+    <span className="text-xs text-gray-400 dark:text-gray-500">
       👁 {count.toLocaleString("ko-KR")}
     </span>
   );

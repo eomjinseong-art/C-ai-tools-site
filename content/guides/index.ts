@@ -1,0 +1,33 @@
+// Generated list of tool guides (statically bundled).
+import g0 from "@/content/guides/adobe-firefly.json";
+import g1 from "@/content/guides/canva.json";
+import g2 from "@/content/guides/capcut.json";
+import g3 from "@/content/guides/chatgpt.json";
+import g4 from "@/content/guides/claude.json";
+import g5 from "@/content/guides/copilot.json";
+import g6 from "@/content/guides/cursor.json";
+import g7 from "@/content/guides/deepseek.json";
+import g8 from "@/content/guides/elevenlabs.json";
+import g9 from "@/content/guides/figma.json";
+import g10 from "@/content/guides/gamma.json";
+import g11 from "@/content/guides/gemini.json";
+import g12 from "@/content/guides/genspark.json";
+import g13 from "@/content/guides/github-copilot.json";
+import g14 from "@/content/guides/grok.json";
+import g15 from "@/content/guides/heygen.json";
+import g16 from "@/content/guides/higgsfield.json";
+import g17 from "@/content/guides/kling.json";
+import g18 from "@/content/guides/lovable.json";
+import g19 from "@/content/guides/midjourney.json";
+import g20 from "@/content/guides/notebooklm.json";
+import g21 from "@/content/guides/notion-ai.json";
+import g22 from "@/content/guides/perplexity.json";
+import g23 from "@/content/guides/runway.json";
+import g24 from "@/content/guides/seedance.json";
+import g25 from "@/content/guides/suno.json";
+import g26 from "@/content/guides/typecast.json";
+import g27 from "@/content/guides/veo.json";
+import g28 from "@/content/guides/vrew.json";
+import g29 from "@/content/guides/wrtn.json";
+
+export const GUIDE_DATA = [g0, g1, g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, g12, g13, g14, g15, g16, g17, g18, g19, g20, g21, g22, g23, g24, g25, g26, g27, g28, g29];

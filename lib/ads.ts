@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { supabase } from "@/lib/supabase";
 import type { Ad, AdPlacement } from "@/lib/types";
+import { isFamilyUrl } from "@/lib/family";
 
 function isAdLive(ad: Ad, nowMs: number): boolean {
   if (ad.starts_at && new Date(ad.starts_at).getTime() > nowMs) return false;
@@ -21,6 +22,8 @@ export const getActiveAds = cache(async (): Promise<Map<AdPlacement, Ad>> => {
   const nowMs = Date.now();
   for (const row of data as Ad[]) {
     if (!isAdLive(row, nowMs)) continue;
+    // Hub policy: only 나두 family promos, no unrelated shopping ads.
+    if (!isFamilyUrl(row.link_url)) continue;
     if (!map.has(row.placement)) map.set(row.placement, row);
   }
   return map;

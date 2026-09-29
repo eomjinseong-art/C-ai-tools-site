@@ -10,12 +10,15 @@ export default function BrowseView({
   selectedCategory,
   videos,
   selectedVideo,
+  subHeading = false,
 }: {
   categories: Category[];
   selectedCategory: Category | null;
   videos: Video[];
   selectedVideo: Video | null;
+  subHeading?: boolean;
 }) {
+  const Heading = subHeading ? "h2" : "h1";
   if (categories.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-gray-300 bg-white p-12 text-center text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
@@ -34,9 +37,9 @@ export default function BrowseView({
       <div className="flex flex-col gap-3 order-2 lg:order-none">
         {selectedCategory && (
           <div className="flex items-center gap-2 pb-1">
-            <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">
-              {selectedCategory.name}
-            </h1>
+            <Heading className="text-lg font-bold text-gray-900 dark:text-gray-100">
+              {subHeading ? `${selectedCategory.name} 영상으로 배우기` : selectedCategory.name}
+            </Heading>
             {selectedCategory.is_trend && (
               <span className="rounded-full bg-brand-600 px-2 py-0.5 text-xs font-semibold text-white">
                 트렌드

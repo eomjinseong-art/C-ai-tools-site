@@ -2,7 +2,9 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import BrowseView from "@/components/BrowseView";
 import { getCategories, getPublishedVideo, getVideosForCategory } from "@/lib/data";
-import { SITE_NAME } from "@/lib/site";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
+import { getGuide } from "@/lib/guides";
+import ToolGuideView, { guideJsonLd } from "@/components/ToolGuideView";
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -24,6 +26,16 @@ export async function generateMetadata({
   const categories = await getCategories();
   const category = categories.find((c) => c.slug === slug);
   if (!category) return { title: "카테고리" };
+  const guide = getGuide(category.slug);
+  if (guide) {
+    return {
+      title: `${guide.name} 사용법 총정리: 가격, 한국어, 시작하는 법`,
+      description: `${guide.oneLiner} 무료로 되는 것, 유료 플랜, 한국어 지원, 시작하는 3단계와 비슷한 도구까지 ${SITE_NAME}에서 한 번에 정리했어요.`.slice(0, 160),
+      keywords: guide.keywords,
+      alternates: { canonical: `/category/${category.slug}` },
+      openGraph: { title: `${guide.name} 사용법 총정리`, description: guide.oneLiner, url: `/category/${category.slug}` },
+    };
+  }
   return {
     title: `${category.name} 사용법`,
     description: `${category.name} 관련 유튜브 영상을 AI가 요약한 실전 가이드를 ${SITE_NAME}에서 확인하세요.`,
@@ -51,12 +63,26 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     }
   }
 
+  const guide = getGuide(selectedCategory.slug);
+
   return (
+    <div className="flex flex-col gap-8">
+      {guide && (
+        <>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(guideJsonLd(guide, `${SITE_URL}/category/${selectedCategory.slug}`)) }}
+          />
+          <ToolGuideView guide={guide} />
+        </>
+      )}
     <BrowseView
       categories={categories}
       selectedCategory={selectedCategory}
       videos={videos}
       selectedVideo={selectedVideo}
+      subHeading={!!guide}
     />
+    </div>
   );
 }

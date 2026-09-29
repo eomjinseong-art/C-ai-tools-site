@@ -14,7 +14,7 @@ export default function Header() {
             <span>나두AI</span>
           </Link>
           <span className="hidden sm:inline text-xs text-gray-400 dark:text-gray-500 border-l border-gray-200 dark:border-gray-800 pl-3">
-            매일 오전 9시 업데이트
+            AI 도구 한국어 가이드
           </span>
         </div>
         <div className="flex items-center gap-4 sm:gap-6">
@@ -27,8 +27,14 @@ export default function Header() {
             />
           </form>
           <nav className="flex items-center gap-6 text-sm font-medium text-gray-600 dark:text-gray-300">
-            <Link href="/" className="hover:text-brand-600 dark:hover:text-brand-500">
-              홈
+            <Link href="/tools" className="hover:text-brand-600 dark:hover:text-brand-500">
+              도구
+            </Link>
+            <a href="https://nadoo-carousel.vercel.app/?utm_source=nadoo-ai&utm_medium=hub&utm_campaign=nav" target="_blank" rel="noopener" className="hover:text-brand-600 dark:hover:text-brand-500">
+              캐러셀
+            </a>
+            <Link href="/#family" className="hidden md:inline hover:text-brand-600 dark:hover:text-brand-500">
+              나두 패밀리
             </Link>
           </nav>
           <div className="flex items-center gap-3 border-l border-gray-200 pl-4 dark:border-gray-800">

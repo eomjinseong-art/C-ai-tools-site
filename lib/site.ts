@@ -3,10 +3,10 @@ export const SITE_URL =
 
 export const SITE_NAME = "나두AI";
 
-export const SITE_TITLE = "나두AI - 대한민국 AI 도구 사용법 모음";
+export const SITE_TITLE = "나두AI - AI 도구 30개 사용법·가격·비교 한국어 가이드";
 
 export const SITE_DESCRIPTION =
-  "챗GPT, 클로드, 미드저니 등 인기 AI 툴의 사용법을 유튜브 영상 요약으로 빠르게 배워보세요. 나두AI에서 매일 업데이트되는 AI 툴 가이드를 확인하세요.";
+  "챗GPT, 클로드, 제미나이, 캔바, 런웨이 등 인기 AI 도구 30개의 가격, 한국어 지원, 쓰는 법을 한국어로 정리했어요. 상황별 추천과 매일 새 AI 캐러셀까지 나두AI에서 확인하세요.";
 
 export const SITE_OG_IMAGE = "/og.png";
 

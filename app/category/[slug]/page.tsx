@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import BrowseView from "@/components/BrowseView";
 import { getCategories, getPublishedVideo, getVideosForCategory } from "@/lib/data";
-import { SITE_NAME, SITE_URL } from "@/lib/site";
+import { SITE_NAME, SITE_OG_IMAGE, SITE_URL } from "@/lib/site";
 import { getGuide } from "@/lib/guides";
 import ToolGuideView, { guideJsonLd } from "@/components/ToolGuideView";
 
@@ -30,10 +30,10 @@ export async function generateMetadata({
   if (guide) {
     return {
       title: `${guide.name} 사용법 총정리: 가격, 한국어, 시작하는 법`,
-      description: `${guide.oneLiner} 무료로 되는 것, 유료 플랜, 한국어 지원, 시작하는 3단계와 비슷한 도구까지 ${SITE_NAME}에서 한 번에 정리했어요.`.slice(0, 160),
+      description: `${guide.oneLiner.replace(/[.。]?$/, ".")} 무료로 되는 것, 유료 플랜, 한국어 지원, 시작하는 3단계와 비슷한 도구까지 ${SITE_NAME}에서 한 번에 정리했어요.`.slice(0, 160),
       keywords: guide.keywords,
       alternates: { canonical: `/category/${category.slug}` },
-      openGraph: { title: `${guide.name} 사용법 총정리`, description: guide.oneLiner, url: `/category/${category.slug}` },
+      openGraph: { title: `${guide.name} 사용법 총정리`, description: guide.oneLiner, url: `/category/${category.slug}`, locale: "ko_KR", type: "article", siteName: SITE_NAME, images: [{ url: SITE_OG_IMAGE, width: 1200, height: 630, alt: `${guide.name} 사용법` }] },
     };
   }
   return {

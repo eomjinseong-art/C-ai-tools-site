@@ -1,9 +1,11 @@
+import { CoupangBanner } from "@/components/CoupangBanner";
 import Link from "next/link";
 import ContactModal from "@/components/ContactModal";
 
 export default function Footer() {
   return (
     <footer className="border-t border-gray-200 bg-white mt-16 dark:border-gray-800 dark:bg-gray-900">
+      <CoupangBanner />
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500 dark:text-gray-400">
         <div className="flex flex-col items-center sm:items-start gap-1 text-center sm:text-left">
           <p>

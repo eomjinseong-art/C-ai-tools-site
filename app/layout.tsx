@@ -13,6 +13,7 @@ import {
 } from "@/lib/site";
 
 export const metadata: Metadata = {
+  verification: { google: "LglMaYLzS6dacAPQ5ZgZdPgzdtfLbp_1Rk5vh3WNPlM" },
   metadataBase: new URL(SITE_URL),
   title: {
     default: SITE_TITLE,

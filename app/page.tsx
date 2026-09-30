@@ -32,14 +32,14 @@ export default async function HomePage() {
 
       <LatestCarousels />
 
-      <SituationPicks />
-
       {toolCategories.length > 0 && (
         <section id="tools" className="flex flex-col gap-3">
           <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">도구별 사용법 가이드</h2>
           <CategoryChips categories={toolCategories} />
         </section>
       )}
+
+      <SituationPicks />
 
       <AiTechNews />
 

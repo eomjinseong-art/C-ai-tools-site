@@ -1,3 +1,7 @@
+import type { SourceCue } from "@/lib/summaryPresentation";
+
+export type { SourceCue };
+
 export interface Category {
   id: string;
   slug: string;
@@ -34,6 +38,13 @@ export interface Video {
   difficulty: string | null;
   takeaway: string | null;
   transcript_lang: string | null;
+  summary_source?: string | null;
+  summary_generated_at?: string | null;
+  summary_verified_at?: string | null;
+  source_cues?: SourceCue[] | null;
+  useful_facts?: string[] | null;
+  costs?: string | null;
+  limitations?: string | null;
   rank: number | null;
   status: VideoStatus;
   collected_at: string;
@@ -102,8 +113,14 @@ export type SearchVideo = {
   published_at: string | null;
   channel_title: string | null;
   rank: number | null;
+  youtube_id?: string | null;
+  summary?: string | null;
+  hook?: string | null;
+  target_video_count?: number | null;
   category_slug: string;
   category_name: string;
+  listing?: "recommended" | "archive";
+  badges?: string[];
 };
 
 export type VideoCardData = {
@@ -114,6 +131,7 @@ export type VideoCardData = {
   view_count: number;
   published_at: string | null;
   rank: number | null;
+  badges?: string[];
 };
 
 export interface Ad {

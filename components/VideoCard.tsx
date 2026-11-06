@@ -50,6 +50,9 @@ export default function VideoCard({
           <p className="truncate text-xs text-gray-500 dark:text-gray-400">{video.channel_title}</p>
         )}
         {meta && <p className="text-xs text-gray-400 dark:text-gray-500">{meta}</p>}
+        {video.badges && video.badges.length > 0 && (
+          <p className="text-[11px] text-amber-700 dark:text-amber-300">{video.badges.join(" · ")}</p>
+        )}
       </div>
     </Link>
   );

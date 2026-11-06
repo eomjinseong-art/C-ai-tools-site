@@ -7,17 +7,11 @@ import { getGuide } from "@/lib/guides";
 import ToolGuideView, { guideJsonLd } from "@/components/ToolGuideView";
 
 export const revalidate = 60;
-export const dynamicParams = true;
 
 type CategoryPageProps = {
   params: { slug: string } | Promise<{ slug: string }>;
   searchParams?: { video?: string } | Promise<{ video?: string }>;
 };
-
-export async function generateStaticParams() {
-  const categories = await getCategories();
-  return categories.map((category) => ({ slug: category.slug }));
-}
 
 export async function generateMetadata({
   params,

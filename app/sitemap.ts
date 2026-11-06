@@ -3,7 +3,8 @@ import { getSitemapEntries } from "@/lib/data";
 import { SITE_URL } from "@/lib/site";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const { categories, videos } = await getSitemapEntries();
+  const { categories, videos, archiveSlugs } = await getSitemapEntries();
+  const archived = archiveSlugs ? new Set(archiveSlugs) : null;
 
   return [
     {
@@ -26,11 +27,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "yearly",
       priority: 0.3,
     },
-    ...categories.map((category) => ({
-      url: `${SITE_URL}/category/${category.slug}`,
-      changeFrequency: "daily" as const,
-      priority: 0.8,
-    })),
+    ...categories.flatMap((category) => {
+      const entries: MetadataRoute.Sitemap = [
+        {
+          url: `${SITE_URL}/category/${category.slug}`,
+          changeFrequency: "daily",
+          priority: 0.8,
+        },
+      ];
+      if (!archived || archived.has(category.slug)) {
+        entries.push({
+          url: `${SITE_URL}/category/${category.slug}/archive`,
+          changeFrequency: "weekly",
+          priority: 0.4,
+        });
+      }
+      return entries;
+    }),
     ...videos.map((video) => ({
       url: `${SITE_URL}/video/${video.id}`,
       lastModified: video.updated_at,

@@ -1,4 +1,6 @@
 import { cache } from "react";
+import { ARCHIVE_RANK, pageWindow } from "@/lib/listing";
+import { rankSearchHits } from "@/lib/searchRank";
 import { supabase } from "@/lib/supabase";
 import { compactThumbnail } from "@/lib/thumbnails";
 import type { CarouselVideo, Category, CategoryPreview, SearchVideo, Video } from "@/lib/types";
@@ -31,6 +33,8 @@ export const getCategoryPreviews = cache(async (): Promise<CategoryPreview[]> =>
     .from("videos")
     .select("category_id, thumbnail_url, rank")
     .eq("status", "published")
+    .gte("rank", 1)
+    .lt("rank", ARCHIVE_RANK)
     .order("rank", { ascending: true })
     .limit(300);
 
@@ -61,11 +65,44 @@ export const getVideosForCategory = cache(async (categoryId: string): Promise<Vi
     .select("*")
     .eq("category_id", categoryId)
     .eq("status", "published")
+    .gte("rank", 1)
+    .lt("rank", ARCHIVE_RANK)
     .order("rank", { ascending: true })
-    .limit(10);
+    .limit(ARCHIVE_RANK - 1);
 
   if (error) {
     console.error("Failed to load videos", error);
+    return [];
+  }
+  return (data ?? []) as Video[];
+});
+
+export const countArchivedVideos = cache(async (categoryId: string): Promise<number> => {
+  const { count, error } = await supabase
+    .from("videos")
+    .select("id", { count: "exact", head: true })
+    .eq("category_id", categoryId)
+    .eq("status", "published")
+    .gte("rank", ARCHIVE_RANK);
+  if (error) {
+    console.error("Failed to count archived videos", error);
+    return 0;
+  }
+  return count ?? 0;
+});
+
+export const getArchivedVideos = cache(async (categoryId: string, page: number): Promise<Video[]> => {
+  const window = pageWindow(page);
+  const { data, error } = await supabase
+    .from("videos")
+    .select("*")
+    .eq("category_id", categoryId)
+    .eq("status", "published")
+    .gte("rank", ARCHIVE_RANK)
+    .order("published_at", { ascending: false })
+    .range(window.from, window.to);
+  if (error) {
+    console.error("Failed to load archived videos", error);
     return [];
   }
   return (data ?? []) as Video[];
@@ -131,6 +168,8 @@ export const getCarouselVideos = cache(async (): Promise<CarouselVideo[]> => {
     .from("videos")
     .select("id, title, thumbnail_url, view_count, published_at, categories(slug, name)")
     .eq("status", "published")
+    .gte("rank", 1)
+    .lt("rank", ARCHIVE_RANK)
     .order("published_at", { ascending: false })
     .limit(24);
 
@@ -166,54 +205,80 @@ function sanitizeSearchQuery(raw: string): string {
     .trim();
 }
 
-export async function searchVideos(query: string): Promise<SearchVideo[]> {
-  const q = sanitizeSearchQuery(query);
-  if (!q) return [];
+function sanitizeCategorySlug(raw: string): string {
+  const slug = raw.trim();
+  return /^[a-z0-9-]{1,80}$/.test(slug) ? slug : "";
+}
 
-  const pattern = `"%${q}%"`;
-  const { data, error } = await supabase
+export async function searchVideos(query: string, categorySlug = ""): Promise<SearchVideo[]> {
+  const q = sanitizeSearchQuery(query);
+  const safeSlug = sanitizeCategorySlug(categorySlug);
+  if (!q && !safeSlug) return [];
+
+  const pattern = q ? `"%${q}%"` : "";
+  let request = supabase
     .from("videos")
-    .select(`${VIDEO_CARD_COLUMNS}, categories(slug, name)`)
-    .eq("status", "published")
-    .or(`title.ilike.${pattern},summary.ilike.${pattern},hook.ilike.${pattern},takeaway.ilike.${pattern}`)
-    .limit(40);
+    .select(`${VIDEO_CARD_COLUMNS}, summary, hook, categories!inner(slug, name, target_video_count)`)
+    .eq("status", "published");
+  if (q) {
+    const idClause = /^[\w-]{6,16}$/.test(q) ? `,youtube_id.eq.${q}` : "";
+    request = request.or(`title.ilike.${pattern},summary.ilike.${pattern},hook.ilike.${pattern},takeaway.ilike.${pattern}${idClause}`);
+  }
+  if (safeSlug) request = request.eq("categories.slug", safeSlug);
+  const { data, error } = await request.limit(80);
 
   if (error || !data) {
     console.error("Failed to search videos", error);
     return [];
   }
 
-  const qLower = q.toLowerCase();
-  return data
-    .map((v) => {
-      const category = Array.isArray(v.categories) ? v.categories[0] : v.categories;
-      return {
-        id: v.id as string,
-        title: v.title as string,
-        thumbnail_url: v.thumbnail_url as string | null,
-        view_count: (v.view_count as number) ?? 0,
-        published_at: (v.published_at as string | null) ?? null,
-        channel_title: (v.channel_title as string | null) ?? null,
-        rank: (v.rank as number | null) ?? null,
-        category_slug: (category?.slug as string) ?? "",
-        category_name: (category?.name as string) ?? "",
-      };
-    })
-    .sort((a, b) => {
-      const aTitle = a.title.toLowerCase().includes(qLower) ? 0 : 1;
-      const bTitle = b.title.toLowerCase().includes(qLower) ? 0 : 1;
-      if (aTitle !== bTitle) return aTitle - bTitle;
-      return b.view_count - a.view_count;
-    });
+  const hits = data.map((v) => {
+    const category = Array.isArray(v.categories) ? v.categories[0] : v.categories;
+    return {
+      id: v.id as string,
+      title: v.title as string,
+      thumbnail_url: v.thumbnail_url as string | null,
+      view_count: (v.view_count as number) ?? 0,
+      published_at: (v.published_at as string | null) ?? null,
+      channel_title: (v.channel_title as string | null) ?? null,
+      rank: (v.rank as number | null) ?? null,
+      youtube_id: (v.youtube_id as string | null) ?? null,
+      summary: (v.summary as string | null) ?? null,
+      hook: (v.hook as string | null) ?? null,
+      category_slug: (category?.slug as string) ?? "",
+      category_name: (category?.name as string) ?? "",
+      target_video_count: (category?.target_video_count as number | null) ?? 10,
+    };
+  });
+  return rankSearchHits(hits, q).slice(0, 40);
 }
 
+const ARCHIVE_SITEMAP_CAP = 5000;
+
 export const getSitemapEntries = cache(async () => {
-  const [categories, videos] = await Promise.all([
+  const [categories, videos, archived] = await Promise.all([
     supabase.from("categories").select("slug"),
     supabase.from("videos").select("id, updated_at").eq("status", "published"),
+    supabase
+      .from("videos")
+      .select("categories!inner(slug)")
+      .eq("status", "published")
+      .gte("rank", ARCHIVE_RANK)
+      .limit(ARCHIVE_SITEMAP_CAP),
   ]);
+  let archiveSlugs: string[] | null = null;
+  if (!archived.error && (archived.data?.length ?? 0) < ARCHIVE_SITEMAP_CAP) {
+    const slugs = new Set<string>();
+    for (const row of archived.data ?? []) {
+      const category = Array.isArray(row.categories) ? row.categories[0] : row.categories;
+      const slug = (category as { slug?: string } | null)?.slug;
+      if (slug) slugs.add(slug);
+    }
+    archiveSlugs = [...slugs];
+  }
   return {
     categories: (categories.data ?? []) as { slug: string }[],
     videos: (videos.data ?? []) as { id: string; updated_at: string }[],
+    archiveSlugs,
   };
 });

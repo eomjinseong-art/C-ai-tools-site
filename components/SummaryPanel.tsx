@@ -2,13 +2,96 @@ import type { Video } from "@/lib/types";
 import AdBanner from "@/components/AdBanner";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
 import { formatViewCount, formatPublishedDate, formatDuration, joinMeta } from "@/lib/format";
+import { presentSummary } from "@/lib/summaryPresentation";
+
+function SummaryBody({ video }: { video: Video }) {
+  const view = presentSummary(video);
+  if (view.state === "pending") {
+    return (
+      <p className="rounded-xl border border-dashed border-gray-300 bg-white px-4 py-3 text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
+        요약을 준비 중입니다. 신청·홍보 문장이나 제목 반복은 요약으로 보여 주지 않습니다.
+      </p>
+    );
+  }
+  return (
+    <>
+      {view.hook && (
+        <p className="rounded-xl border border-brand-100 bg-brand-50 px-4 py-3 text-sm font-medium leading-relaxed text-brand-700 dark:border-brand-500/20 dark:bg-brand-500/10 dark:text-brand-400">
+          {view.hook}
+        </p>
+      )}
+      <section>
+        <h3 className="mb-2 text-sm font-semibold text-gray-900 dark:text-gray-100">{view.label}</h3>
+        <p className="text-sm leading-relaxed text-gray-700 whitespace-pre-wrap dark:text-gray-300">{view.summary}</p>
+        {view.points.length > 0 && (
+          <ul className="mt-3 flex flex-col gap-1.5">
+            {view.points.map((point) => (
+              <li key={point} className="flex gap-2 text-sm text-gray-700 dark:text-gray-300">
+                <span className="font-semibold text-brand-600 dark:text-brand-400">•</span>
+                <span>{point}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+      {view.features.length > 0 && (
+        <section>
+          <h3 className="mb-2 text-sm font-semibold text-gray-900 dark:text-gray-100">주요 기능</h3>
+          <ul className="flex flex-col gap-1.5">
+            {view.features.map((feature) => (
+              <li key={feature} className="flex gap-2 text-sm text-gray-700 dark:text-gray-300">
+                <span className="font-semibold text-brand-600 dark:text-brand-400">✓</span>
+                <span>{feature}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {view.facts.length > 0 && (
+        <section>
+          <h3 className="mb-2 text-sm font-semibold text-gray-900 dark:text-gray-100">확인된 사실</h3>
+          <ul className="flex flex-col gap-1.5">
+            {view.facts.map((fact) => (
+              <li key={fact} className="text-sm text-gray-700 dark:text-gray-300">{fact}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {view.costs && <p className="text-sm text-gray-700 dark:text-gray-300">비용: {view.costs}</p>}
+      {view.limitations && <p className="text-sm text-gray-700 dark:text-gray-300">한계: {view.limitations}</p>}
+      {view.cues.length > 0 && (
+        <section>
+          <h3 className="mb-2 text-sm font-semibold text-gray-900 dark:text-gray-100">자막 위치</h3>
+          <ul className="flex flex-col gap-1">
+            {view.cues.map((cue) => (
+              <li key={`${cue.offsetSeconds}-${cue.text}`} className="text-sm text-gray-700 dark:text-gray-300">
+                {cue.href ? (
+                  <a href={cue.href} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                    {cue.offsetSeconds}초 · {cue.text}
+                  </a>
+                ) : (
+                  <span>{cue.offsetSeconds}초 · {cue.text}</span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {view.takeaway && (
+        <p className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm italic text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300">
+          &ldquo;{view.takeaway}&rdquo;
+        </p>
+      )}
+    </>
+  );
+}
 
 export default function SummaryPanel({ video }: { video: Video | null }) {
   if (!video) {
     return (
       <div className="flex h-full flex-col gap-4">
         <div className="rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
-          왼쪽에서 영상을 선택하면 여기에 AI 요약이 표시됩니다.
+          왼쪽에서 영상을 선택하면 여기에 요약이 표시됩니다.
         </div>
         <AdBanner placement="category_sidebar_1" />
         <AdBanner placement="category_sidebar_2" />
@@ -75,50 +158,7 @@ export default function SummaryPanel({ video }: { video: Video | null }) {
         </div>
       </div>
 
-      {video.hook && (
-        <p className="rounded-xl border border-brand-100 bg-brand-50 px-4 py-3 text-sm font-medium leading-relaxed text-brand-700 dark:border-brand-500/20 dark:bg-brand-500/10 dark:text-brand-400">
-          {video.hook}
-        </p>
-      )}
-
-      {video.summary && (
-        <section>
-          <h3 className="mb-2 text-sm font-semibold text-gray-900 dark:text-gray-100">AI 요약</h3>
-          <p className="text-sm leading-relaxed text-gray-700 whitespace-pre-wrap dark:text-gray-300">
-            {video.summary}
-          </p>
-          {video.summary_points && video.summary_points.length > 0 && (
-            <ul className="mt-3 flex flex-col gap-1.5">
-              {video.summary_points.map((point, i) => (
-                <li key={i} className="flex gap-2 text-sm text-gray-700 dark:text-gray-300">
-                  <span className="font-semibold text-brand-600 dark:text-brand-400">•</span>
-                  <span>{point}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-      )}
-
-      {video.tool_features && video.tool_features.length > 0 && (
-        <section>
-          <h3 className="mb-2 text-sm font-semibold text-gray-900 dark:text-gray-100">주요 기능</h3>
-          <ul className="flex flex-col gap-1.5">
-            {video.tool_features.map((feature, i) => (
-              <li key={i} className="flex gap-2 text-sm text-gray-700 dark:text-gray-300">
-                <span className="font-semibold text-brand-600 dark:text-brand-400">✓</span>
-                <span>{feature}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {video.takeaway && (
-        <p className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm italic text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300">
-          &ldquo;{video.takeaway}&rdquo;
-        </p>
-      )}
+      <SummaryBody video={video} />
 
       <div className="flex flex-col gap-3 border-t border-gray-100 pt-4 dark:border-gray-800">
         <AdBanner placement="category_sidebar_1" />

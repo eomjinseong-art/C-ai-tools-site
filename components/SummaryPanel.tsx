@@ -2,6 +2,7 @@ import type { Video } from "@/lib/types";
 import AdBanner from "@/components/AdBanner";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
 import { formatViewCount, formatPublishedDate, formatDuration, joinMeta } from "@/lib/format";
+import { CoupangCard } from "@/components/CoupangCard";
 
 export default function SummaryPanel({ video }: { video: Video | null }) {
   if (!video) {
@@ -99,6 +100,8 @@ export default function SummaryPanel({ video }: { video: Video | null }) {
           )}
         </section>
       )}
+
+      <CoupangCard />
 
       {video.tool_features && video.tool_features.length > 0 && (
         <section>

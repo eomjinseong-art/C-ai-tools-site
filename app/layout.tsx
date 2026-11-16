@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import {
+import { CoupangSticky } from "@/components/CoupangSticky";
   SITE_DESCRIPTION,
   SITE_NAME,
   SITE_OG_IMAGE,
@@ -68,6 +69,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <CoupangSticky />
         <Analytics />
       </body>
     </html>

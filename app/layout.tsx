@@ -3,8 +3,8 @@ import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import {
 import { CoupangSticky } from "@/components/CoupangSticky";
+import {
   SITE_DESCRIPTION,
   SITE_NAME,
   SITE_OG_IMAGE,

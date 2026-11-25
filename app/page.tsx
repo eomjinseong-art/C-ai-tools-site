@@ -8,7 +8,6 @@ import SituationPicks from "@/components/SituationPicks";
 import AiTechNews from "@/components/AiTechNews";
 import FamilySection from "@/components/FamilySection";
 import { getCarouselVideos, getCategoryPreviews } from "@/lib/data";
-import { CoupangCard } from "@/components/CoupangCard";
 
 export const revalidate = 600;
 
@@ -46,8 +45,6 @@ export default async function HomePage() {
       <SituationPicks />
 
       <NadooAd inline />
-
-      <CoupangCard />
 
       <AiTechNews />
 

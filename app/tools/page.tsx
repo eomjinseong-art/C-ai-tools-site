@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllGuides } from "@/lib/guides";
 import { Fragment } from "react";
-import { CoupangCard } from "@/components/CoupangCard";
 
 export const metadata: Metadata = {
   title: "AI 도구 30개 한눈에 비교 (가격·한국어·용도)",
@@ -26,12 +25,7 @@ export default function ToolsPage() {
       </header>
       <NadooAd inline />
       {(() => {
-        let seen = 0;
-        let placed = false;
         return [...groups.entries()].map(([cat, list], gi) => {
-          seen += list.length;
-          const showCard = !placed && seen >= 9;
-          if (showCard) placed = true;
           return (
             <Fragment key={cat}>
               <section className="flex flex-col gap-3">
@@ -48,13 +42,12 @@ export default function ToolsPage() {
                   ))}
                 </ul>
               </section>
-              {showCard ? <CoupangCard /> : null}
               {gi === 3 ? <NadooAd inline /> : null}
             </Fragment>
           );
         });
       })()}
-      {getAllGuides().length < 9 ? <CoupangCard /> : null}
+      <NadooAd inline />
     </div>
   );
 }

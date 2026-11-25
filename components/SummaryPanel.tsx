@@ -4,7 +4,6 @@ import AdBanner from "@/components/AdBanner";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
 import { formatViewCount, formatPublishedDate, formatDuration, joinMeta } from "@/lib/format";
 import { presentSummary } from "@/lib/summaryPresentation";
-import { CoupangCard } from "@/components/CoupangCard";
 
 function SummaryBody({ video }: { video: Video }) {
   const view = presentSummary(video);
@@ -14,7 +13,6 @@ function SummaryBody({ video }: { video: Video }) {
         <p className="rounded-xl border border-dashed border-gray-300 bg-white px-4 py-3 text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
           요약을 준비 중입니다. 신청·홍보 문장이나 제목 반복은 요약으로 보여 주지 않습니다.
         </p>
-        <CoupangCard />
       </>
     );
   }
@@ -39,7 +37,6 @@ function SummaryBody({ video }: { video: Video }) {
           </ul>
         )}
       </section>
-      <CoupangCard />
       {view.features.length > 0 && (
         <section>
           <h3 className="mb-2 text-sm font-semibold text-gray-900 dark:text-gray-100">주요 기능</h3>

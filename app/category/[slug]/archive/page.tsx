@@ -1,3 +1,4 @@
+import { NadooAd } from "@/components/NadooAd";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
@@ -85,6 +86,7 @@ export default async function ArchivePage({ params, searchParams }: ArchivePageP
           )}
         </nav>
       )}
+      <NadooAd inline />
     </div>
   );
 }

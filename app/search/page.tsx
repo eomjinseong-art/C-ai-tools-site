@@ -1,3 +1,4 @@
+import { NadooAd } from "@/components/NadooAd";
 import type { Metadata } from "next";
 import VideoCard from "@/components/VideoCard";
 import { getCategories, searchVideos } from "@/lib/data";
@@ -87,6 +88,7 @@ export default async function SearchPage({
           ))}
         </div>
       ) : null}
+      <NadooAd inline />
     </div>
   );
 }

@@ -48,7 +48,7 @@ export default function ToolGuideView({ guide }: { guide: ToolGuide }) {
         </div>
       </div>
 
-      <NadooAd inline />
+      <NadooAd inline types="linkprice" />
 
       <div className="grid gap-6 sm:grid-cols-2">
         <List title="이럴 때 쓰세요" items={guide.bestFor} />
@@ -57,7 +57,7 @@ export default function ToolGuideView({ guide }: { guide: ToolGuide }) {
         <List title="실전 팁" items={guide.tips} />
       </div>
 
-      <NadooAd inline />
+      <NadooAd inline exclude="linkprice" />
 
       {guide.alternatives?.length > 0 && (
         <div>

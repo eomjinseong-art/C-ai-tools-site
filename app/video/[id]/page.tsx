@@ -58,7 +58,7 @@ export default async function VideoPage({ params }: VideoPageProps) {
       archiveHref={selectedCategory ? `/category/${selectedCategory.slug}/archive` : undefined}
       archiveCount={archivedCount}
     />
-    <NadooAd inline />
+    <NadooAd inline exclude="linkprice" />
     </>
   );
 }

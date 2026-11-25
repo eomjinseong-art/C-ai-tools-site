@@ -1,3 +1,4 @@
+import { NadooAd } from "@/components/NadooAd";
 import type { Video } from "@/lib/types";
 import AdBanner from "@/components/AdBanner";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
@@ -98,6 +99,7 @@ export default function SummaryPanel({ video }: { video: Video | null }) {
         <div className="rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
           왼쪽에서 영상을 선택하면 여기에 요약이 표시됩니다.
         </div>
+        <NadooAd inline />
         <AdBanner placement="category_sidebar_1" />
         <AdBanner placement="category_sidebar_2" />
         <AdBanner placement="category_sidebar_3" />
@@ -164,6 +166,8 @@ export default function SummaryPanel({ video }: { video: Video | null }) {
       </div>
 
       <SummaryBody video={video} />
+
+      <NadooAd inline />
 
       <div className="flex flex-col gap-3 border-t border-gray-100 pt-4 dark:border-gray-800">
         <AdBanner placement="category_sidebar_1" />

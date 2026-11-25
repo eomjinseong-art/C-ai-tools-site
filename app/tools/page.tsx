@@ -1,3 +1,4 @@
+import { NadooAd } from "@/components/NadooAd";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllGuides } from "@/lib/guides";
@@ -23,10 +24,11 @@ export default function ToolsPage() {
         <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl dark:text-gray-100">AI 도구 30개 한눈에 보기</h1>
         <p className="mt-2 text-gray-500 dark:text-gray-400">용도별로 묶었어요. 이름을 누르면 가격, 한국어 지원, 시작하는 법까지 볼 수 있어요.</p>
       </header>
+      <NadooAd inline />
       {(() => {
         let seen = 0;
         let placed = false;
-        return [...groups.entries()].map(([cat, list]) => {
+        return [...groups.entries()].map(([cat, list], gi) => {
           seen += list.length;
           const showCard = !placed && seen >= 9;
           if (showCard) placed = true;
@@ -47,6 +49,7 @@ export default function ToolsPage() {
                 </ul>
               </section>
               {showCard ? <CoupangCard /> : null}
+              {gi === 3 ? <NadooAd inline /> : null}
             </Fragment>
           );
         });

@@ -1,3 +1,4 @@
+import { NadooAd } from "@/components/NadooAd";
 import type { Metadata } from "next";
 import AdBanner from "@/components/AdBanner";
 import TopCarousel from "@/components/TopCarousel";
@@ -31,6 +32,8 @@ export default async function HomePage() {
         <TopCarousel videos={carouselVideos} />
       </section>
 
+      <NadooAd inline />
+
       <LatestCarousels />
 
       {toolCategories.length > 0 && (
@@ -42,9 +45,13 @@ export default async function HomePage() {
 
       <SituationPicks />
 
+      <NadooAd inline />
+
       <CoupangCard />
 
       <AiTechNews />
+
+      <NadooAd inline />
 
       <FamilySection />
 

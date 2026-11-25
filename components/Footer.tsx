@@ -10,10 +10,10 @@ export default function Footer() {
         <div className="flex flex-col items-center sm:items-start gap-1 text-center sm:text-left">
           <p>
             &copy; {new Date().getFullYear()} 나두AI. 모든 영상 콘텐츠의 저작권은 각 원저작자에게
-            있으며, 본 사이트는 AI로 재구성한 요약 정보만 제공합니다.
+            있습니다. 요약은 설명·자막 발췌이거나 사람이 검토한 글입니다.
           </p>
           <p className="text-xs text-gray-400 dark:text-gray-500">
-            AI 요약 정보는 정확성을 보장하지 않으니, 정확한 내용은 원본 영상을 확인해 주세요.
+            신청·홍보 문장이나 제목 반복은 요약으로 표시하지 않습니다. 정확한 내용은 원본 영상을 확인해 주세요.
           </p>
         </div>
 

@@ -1,4 +1,6 @@
+import Link from "next/link";
 import type { Category, Video } from "@/lib/types";
+import { isArchivedRank } from "@/lib/listing";
 import { TOOL_SITE_URLS } from "@/lib/toolSites";
 import AdBanner from "@/components/AdBanner";
 import CategoryMenu from "@/components/CategoryMenu";
@@ -11,14 +13,20 @@ export default function BrowseView({
   videos,
   selectedVideo,
   subHeading = false,
+  archiveHref,
+  archiveCount = 0,
 }: {
   categories: Category[];
   selectedCategory: Category | null;
   videos: Video[];
   selectedVideo: Video | null;
   subHeading?: boolean;
+  archiveHref?: string;
+  archiveCount?: number;
 }) {
   const Heading = subHeading ? "h2" : "h1";
+  const archivedSelection =
+    selectedVideo != null && isArchivedRank(selectedVideo.rank) && !videos.some((video) => video.id === selectedVideo.id);
   if (categories.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-gray-300 bg-white p-12 text-center text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
@@ -59,7 +67,9 @@ export default function BrowseView({
         )}
         {videos.length === 0 ? (
           <div className="rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
-            아직 수집된 영상이 없습니다. 곧 업데이트될 예정입니다.
+            {archivedSelection
+              ? "추천 목록은 비어 있고, 선택한 영상은 보관에만 남아 있습니다."
+              : "아직 수집된 영상이 없습니다. 곧 업데이트될 예정입니다."}
           </div>
         ) : (
           <>
@@ -78,12 +88,30 @@ export default function BrowseView({
             <AdBanner placement="video_list_bottom" />
           </>
         )}
+        {archiveHref && (
+          <Link href={archiveHref} className="text-sm font-medium text-brand-600 hover:underline dark:text-brand-400">
+            보관 영상 보기{archiveCount > 0 ? ` (${archiveCount})` : ""}
+          </Link>
+        )}
       </div>
 
       <div
         id="player"
         className="order-1 lg:order-none lg:border-l lg:border-gray-100 lg:pl-4 dark:lg:border-gray-800"
       >
+        {archivedSelection && (
+          <p className="mb-3 text-sm text-amber-800 dark:text-amber-200">
+            이 영상은 추천 목록 밖에 있는 보관 영상입니다.
+            {archiveHref && (
+              <>
+                {" "}
+                <Link href={archiveHref} className="font-medium text-brand-600 hover:underline dark:text-brand-400">
+                  보관 목록
+                </Link>
+              </>
+            )}
+          </p>
+        )}
         <SummaryPanel video={selectedVideo} />
       </div>
     </section>

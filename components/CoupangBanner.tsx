@@ -13,7 +13,7 @@ export function CoupangBanner({ className = "" }: { className?: string }) {
         <span className="shrink-0 rounded border border-gray-300 px-1.5 py-0.5 text-[10px] text-gray-500 dark:border-gray-700 dark:text-gray-400">
           광고
         </span>
-        <span className="min-w-0 flex-1">요약은 AI가 끝냈으니, 아낀 시간엔 쿠팡 구경 한 바퀴 어떠세요?</span>
+        <span className="min-w-0 flex-1">원본 영상은 유튜브에 있습니다. 여유 시간에 쿠팡을 둘러보실 수 있어요.</span>
         <span aria-hidden="true" className="shrink-0 text-brand-600 dark:text-brand-500">
           →
         </span>

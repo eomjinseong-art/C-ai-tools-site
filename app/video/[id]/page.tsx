@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import BrowseView from "@/components/BrowseView";
-import { getCategories, getPublishedVideo, getVideosForCategory } from "@/lib/data";
+import { countArchivedVideos, getCategories, getPublishedVideo, getVideosForCategory } from "@/lib/data";
 import { compactThumbnail } from "@/lib/thumbnails";
+import { presentSummary } from "@/lib/summaryPresentation";
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -15,7 +16,8 @@ export async function generateMetadata({ params }: VideoPageProps): Promise<Meta
   const { id } = await params;
   const video = await getPublishedVideo(id);
   if (!video) return { title: "영상" };
-  const description = video.summary ?? video.hook ?? video.title;
+  const view = presentSummary(video);
+  const description = (view.state === "shown" ? view.summary : video.title).replace(/\s+/g, " ").slice(0, 160);
   const image = compactThumbnail(video.thumbnail_url);
   return {
     title: video.title,
@@ -39,7 +41,10 @@ export default async function VideoPage({ params }: VideoPageProps) {
   if (!video) notFound();
 
   const selectedCategory = categories.find((c) => c.id === video.category_id) ?? null;
-  const videos = selectedCategory ? await getVideosForCategory(selectedCategory.id) : [];
+  const videos = selectedCategory
+    ? await getVideosForCategory(selectedCategory.id)
+    : [];
+  const archivedCount = selectedCategory ? await countArchivedVideos(selectedCategory.id) : 0;
   const selectedVideo = videos.find((v) => v.id === video.id) ?? video;
 
   return (
@@ -48,6 +53,8 @@ export default async function VideoPage({ params }: VideoPageProps) {
       selectedCategory={selectedCategory}
       videos={videos}
       selectedVideo={selectedVideo}
+      archiveHref={selectedCategory ? `/category/${selectedCategory.slug}/archive` : undefined}
+      archiveCount={archivedCount}
     />
   );
 }

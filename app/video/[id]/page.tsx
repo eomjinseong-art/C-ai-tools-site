@@ -1,3 +1,4 @@
+import { NadooAd } from "@/components/NadooAd";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import BrowseView from "@/components/BrowseView";
@@ -48,6 +49,7 @@ export default async function VideoPage({ params }: VideoPageProps) {
   const selectedVideo = videos.find((v) => v.id === video.id) ?? video;
 
   return (
+    <>
     <BrowseView
       categories={categories}
       selectedCategory={selectedCategory}
@@ -56,5 +58,7 @@ export default async function VideoPage({ params }: VideoPageProps) {
       archiveHref={selectedCategory ? `/category/${selectedCategory.slug}/archive` : undefined}
       archiveCount={archivedCount}
     />
+    <NadooAd inline />
+    </>
   );
 }

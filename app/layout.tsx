@@ -1,5 +1,5 @@
 import Script from "next/script";
-import { NadooAd } from "@/components/NadooAd";
+import { AppleStrip } from "@/components/AppleStrip";
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
@@ -68,8 +68,8 @@ export default function RootLayout({
         />
         <Header />
         <main className="flex-1 mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 py-8">
+          <AppleStrip />
           {children}
-          <NadooAd inline />
         </main>
         <Footer />
         <CoupangSticky />

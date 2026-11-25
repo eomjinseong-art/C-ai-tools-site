@@ -1,3 +1,4 @@
+import { NadooAd } from "@/components/NadooAd";
 import Link from "next/link";
 import { GUIDE_CHECKED, getGuide, type ToolGuide } from "@/lib/guides";
 import { TOOL_SITE_URLS } from "@/lib/toolSites";
@@ -47,12 +48,16 @@ export default function ToolGuideView({ guide }: { guide: ToolGuide }) {
         </div>
       </div>
 
+      <NadooAd inline />
+
       <div className="grid gap-6 sm:grid-cols-2">
         <List title="이럴 때 쓰세요" items={guide.bestFor} />
         <List title="이럴 땐 다른 도구가 나아요" items={guide.notFor} />
         <List title="시작하는 3단계" items={guide.quickStart} ordered />
         <List title="실전 팁" items={guide.tips} />
       </div>
+
+      <NadooAd inline />
 
       {guide.alternatives?.length > 0 && (
         <div>

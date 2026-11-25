@@ -86,7 +86,7 @@ export default async function ArchivePage({ params, searchParams }: ArchivePageP
           )}
         </nav>
       )}
-      <NadooAd inline />
+      <NadooAd inline exclude="linkprice" />
     </div>
   );
 }

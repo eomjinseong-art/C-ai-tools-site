@@ -88,7 +88,7 @@ export default async function SearchPage({
           ))}
         </div>
       ) : null}
-      <NadooAd inline />
+      <NadooAd inline exclude="linkprice" />
     </div>
   );
 }

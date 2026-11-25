@@ -31,7 +31,7 @@ export default async function HomePage() {
         <TopCarousel videos={carouselVideos} />
       </section>
 
-      <NadooAd inline />
+      <NadooAd inline exclude="linkprice" />
 
       <LatestCarousels />
 
@@ -44,11 +44,11 @@ export default async function HomePage() {
 
       <SituationPicks />
 
-      <NadooAd inline />
+      <NadooAd inline types="linkprice" />
 
       <AiTechNews />
 
-      <NadooAd inline />
+      <NadooAd inline exclude="linkprice" />
 
       <FamilySection />
 

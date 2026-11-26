@@ -74,6 +74,7 @@ export default function RootLayout({
         <Footer />
         <CoupangSticky />
         <Analytics />
+        <div className="nadoo-ad-bar" />
         <Script src="https://nadoo-ads.vercel.app/ads.js" strategy="afterInteractive" />
       </body>
     </html>
